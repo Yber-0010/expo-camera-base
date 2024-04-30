@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { Camera as Scan, CameraType } from 'expo-camera';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ModalAlert } from './ModalAlert';
 
 export const CameraScan = () => {
   const [type, setType] = useState(CameraType.back);
+  const [data, setData] = useState('');
   const [permission, requestPermission] = Scan.useCameraPermissions();
 
   const [scanned, setScanned] = useState(false)
@@ -30,9 +32,13 @@ export const CameraScan = () => {
 
   const handleBarCodeScanned =  async ({ type, data }) => {
     setScanned(true);
+    setData(data);
     console.log(`Bar code with type ${type} and data ${data} has been scanned!`);
     console.log(`--------------`);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    setTimeout(() => {
+      setScanned(false);
+    }, 5000);
   };
 
   return (
@@ -52,9 +58,14 @@ export const CameraScan = () => {
 					barcodeTypes: ["qr", "pdf417"],
 				}}
 			></Scan>
-      {scanned && (
+      {/* {scanned && (
         <Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-      )}
+      )} */}
+      <View style={{ position: "absolute" }}>
+				{scanned && (
+					<ModalAlert  time={2000} blue={100} green={100} red={100} message={data} />
+				)}
+			</View>
     </View>
   );
 }
